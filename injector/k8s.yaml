@@ -1,0 +1,44 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: custom-service-mesh
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: envoy-injector-mutating-webhook
+  namespace: custom-service-mesh
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: envoy-injector
+  template:
+    metadata:
+      labels:
+        app: envoy-injector
+    spec:
+      containers:
+      - image: patnaikshekhar/custom-service-mesh-injector:0.1
+        imagePullPolicy: Always
+        name: injector
+        volumeMounts:
+        - name: certs
+          mountPath: /app/certs
+      volumes:
+      - name: certs
+        secret:
+          secretName: envoy-injector-secret
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: injector-service
+  namespace: custom-service-mesh
+spec:
+  type: ClusterIP
+  selector:
+    app: envoy-injector
+  ports:
+  - protocol: TCP
+    port: 443
