@@ -1,8 +1,8 @@
 #/bin/bash
 
 echo "Building Docker Image"
-docker build -t patnaikshekhar/custom-service-mesh-injector:$VERSION .
-docker push patnaikshekhar/custom-service-mesh-injector:$VERSION
+docker build -t patnaikshekhar/custom-service-mesh-injector:0.1 .
+docker push patnaikshekhar/custom-service-mesh-injector:0.1
 
 echo "Clean Up"
 kubectl delete secret envoy-injector-secret -n custom-service-mesh

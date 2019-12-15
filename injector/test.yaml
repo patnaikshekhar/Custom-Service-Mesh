@@ -6,7 +6,7 @@ metadata:
     run: nginx
   name: nginx
   annotations:
-    inject-mesh: "false"
+    inject-mesh: "true"
 spec:
   containers:
   - image: nginx

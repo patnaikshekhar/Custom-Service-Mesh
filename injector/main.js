@@ -17,13 +17,27 @@ app.post('/', (req, res) => {
     if (request.object.metadata.annotations['inject-mesh'] === 'true') {
 
       console.log(`Found annotation for pod ${request.object.metadata.name} injecting envoy`)
-      
+
       const patch = [{
         op: "add", 
         path: "/spec/containers/-", 
         value: {
           image: 'envoyproxy/envoy',
-          name: 'envoy'
+          name: 'envoy',
+          args: ["-c", "/etc/envoy/envoy.yaml", "--service-cluster", request.object.metadata.name, "--service-node", request.object.metadata.name],
+          volumeMounts: [{
+            name: 'envoy-config',
+            mountPath: '/etc/envoy'
+          }]
+        }
+      }, {
+        op: "add", 
+        path: "/spec/volumes/-", 
+        value: {
+          name: 'envoy-config',
+          configMap: {
+            name: 'envoy-config'
+          }
         }
       }]
     
