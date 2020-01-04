@@ -68,11 +68,19 @@ data:
       clusters:
       - name: xds_cluster
         connect_timeout:  0.25s
-        type: LOGICAL_DNS
+        type: STRICT_DNS
         dns_lookup_family: V4_ONLY
         lb_policy: ROUND_ROBIN
         hosts:
         - socket_address:
             address: xds-service
             port_value: 80
+      - name: local_cluster
+        connect_timeout:  0.25s
+        type: STATIC
+        lb_policy: ROUND_ROBIN
+        hosts:
+        - socket_address:
+            address: 127.0.0.1
+            port_value: 8081
 ---

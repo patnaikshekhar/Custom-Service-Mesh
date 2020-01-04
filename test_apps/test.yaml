@@ -1,0 +1,77 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: borrowers
+spec:
+  selector:
+    matchLabels:
+      app: borrowers
+  template:
+    metadata:
+      labels:
+        app: borrowers
+      annotations:
+        inject-mesh: "true"
+    spec:
+      containers:
+      - name: borrowers
+        image: patnaikshekhar/custom-service-mesh-borrowers-client:1
+        imagePullPolicy: Always
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: books
+spec:
+  selector:
+    matchLabels:
+      app: books
+  template:
+    metadata:
+      labels:
+        app: books
+      annotations:
+        inject-mesh: "true"
+    spec:
+      containers:
+      - name: books
+        image: patnaikshekhar/custom-service-mesh-books-service:1
+        imagePullPolicy: Always
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: borrower-envoy-admin
+spec:
+  selector:
+    app: borrowers
+  ports:
+  - port: 9901
+    targetPort: 9901
+  type: LoadBalancer
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: books-envoy-admin
+spec:
+  selector:
+    app: books
+  ports:
+  - port: 9901
+    targetPort: 9901
+  type: LoadBalancer
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: books-service
+spec:
+  selector:
+    app: books
+  clusterIP: None
+  ports:
+  - port: 8081
+    targetPort: 8081
+  type: ClusterIP
+

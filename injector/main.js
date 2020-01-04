@@ -24,7 +24,7 @@ app.post('/', (req, res) => {
         value: {
           image: 'envoyproxy/envoy',
           name: 'envoy',
-          args: ["-c", "/etc/envoy/envoy.yaml", "--service-cluster", request.object.metadata.name, "--service-node", request.object.metadata.name],
+          args: ["-c", "/etc/envoy/envoy.yaml", "--service-cluster", "pod", "--service-node", "node"],
           volumeMounts: [{
             name: 'envoy-config',
             mountPath: '/etc/envoy'
